@@ -1,0 +1,3 @@
+[submodule "modules/yae"]
+	path = modules/yae
+	url = https://github.com/Grouflon/yae-jai

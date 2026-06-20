@@ -1,0 +1,5 @@
+.build
+bin
+*.sublime-workspace
+imgui.ini
+temp
