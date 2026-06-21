@@ -6,6 +6,7 @@ Agent :: struct
 {
     position: Vector3;
     velocity: Smoother(Vector2);
+    is_facing_left: bool;
 
     follow_target: bool;
     has_aligned_once: bool;
@@ -74,6 +75,11 @@ agent_update :: (using agent: *Agent, dt: float)
         }
     }
 
+    if length(agent.velocity.value) > 0.1
+    {
+        agent.is_facing_left = velocity.value.x < 0;
+    }
+
     arm_update(*left_arm, agent, dt);
     arm_update(*right_arm, agent, dt);
 
@@ -82,6 +88,8 @@ agent_update :: (using agent: *Agent, dt: float)
 agent_draw :: (agent: *Agent)
 {
     W :: 6;
+
+    sign: float = ifx agent.is_facing_left then -1.0 else 1.0;
 
     // bottom
     hips: = agent.position + .{0,HIPS_HEIGHT,0};
@@ -96,12 +104,12 @@ agent_draw :: (agent: *Agent)
     draw_ellipse(shoulders + .{0,0,0.1}, .{W/2, SHOULDER_HEIGHT/2-1}, agent.top_color);
 
     // arms
-    arm_draw(*agent.left_arm, 0.2, agent.top_color, agent.skin_color);
-    arm_draw(*agent.right_arm, -0.1, agent.top_color, agent.skin_color);
+    arm_draw(*agent.left_arm, sign*0.2, agent.top_color, agent.skin_color);
+    arm_draw(*agent.right_arm, sign*-0.2, agent.top_color, agent.skin_color);
 
     // head
     draw_ellipse(shoulders + .{0,1,0.3}, .{3,2.5}, agent.skin_color);
-    draw_ellipse(shoulders + .{1,3,0.4}, .{3,2}, agent.hair_color);
+    draw_ellipse(shoulders + .{sign * 1,3,0.4}, .{3,2}, agent.hair_color);
 
 } @draw_group()
 
