@@ -1,11 +1,12 @@
 {
+	"agent_max_velocity": 90,
 	"agent_velocity_time_to_90": 0.1,
 	"arm_length": 12.4,
-	"arm_segments": 5,
+	"arm_segments": 4,
 	"arm_target_time_to_90": 0.2,
 	"background_color": [
 		255,
-		225,
+		82,
 		0,
 		255
 	],
@@ -48,9 +49,7 @@
 		]
 	],
 	"constraint_angle": 180,
-	"debug_left_arm": false,
 	"debug_left_leg": false,
-	"debug_right_arm": false,
 	"debug_right_leg": false,
 	"drag": 0.001,
 	"gravity": -800,
@@ -81,8 +80,17 @@
 		]
 	],
 	"iterations": 1,
-	"max_velocity": 90,
-	"segment_count": 4,
+	"leg_movement": [
+		10,
+		2
+	],
+	"leg_movement_phase": 0.4,
+	"leg_target_offset": [
+		2,
+		2
+	],
+	"leg_target_time_to_90": 0.05,
+	"segment_count": 6,
 	"segment_length": 17,
 	"skin_tones": [
 		[

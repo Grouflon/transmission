@@ -155,12 +155,12 @@ game_draw :: ()
         // }
 
         draw_group();
-        rope_draw(*rope, 0.0, 5.0);
+        // rope_draw(*rope, 0.0, 5.0);
 
         clear_depth_buffer();
 
         draw_group("debug");
-        rope_draw_debug(*rope);
+        // rope_draw_debug(*rope);
     }
 
     // COMPOSITING
