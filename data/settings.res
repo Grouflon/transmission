@@ -1,13 +1,15 @@
 {
+	"agent_count": 6,
+	"agent_interval": 12,
 	"agent_max_velocity": 90,
 	"agent_velocity_time_to_90": 0.1,
 	"arm_length": 12.4,
 	"arm_segments": 4,
 	"arm_target_time_to_90": 0.2,
 	"background_color": [
-		255,
-		82,
-		0,
+		2,
+		124,
+		151,
 		255
 	],
 	"clothes_tones": [

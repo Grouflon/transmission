@@ -3,6 +3,9 @@ GameSettings :: struct
     #as using _resource: Resource;
     type = type_info(GameSettings);
 
+    agent_count: int = 1; @min(1) @serialize
+    agent_interval: float = 10.0; @serialize @drag
+
     background_color: Color; @serialize
     segment_count: int = 1; @serialize @min(1) @max(64)
     segment_length: float = 5.0; @serialize @step(1)

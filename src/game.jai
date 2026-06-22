@@ -10,9 +10,10 @@ GAME_WIDTH :: 320;
 GAME_HEIGHT :: 200;
 game_render_texture: RenderTexture;
 
-agent: *Agent;
+agents: [..]*Agent;
+is_following: bool;
 
-rope: Rope;
+// rope: Rope;
 
 game_init :: ()
 {
@@ -38,26 +39,40 @@ game_shutdown :: ()
     unload_all_resources();
 }
 
+pick_random_position :: () -> Vector2
+{
+    MARGIN :: 20.0;
+    return .{
+        random_range(MARGIN, GAME_WIDTH - MARGIN),
+        random_range(MARGIN, GAME_HEIGHT - MARGIN)
+    };
+}
+
 game_start :: ()
 {
-    settings: = resources.settings;
+    for i: 0..s.agent_count-1
+    {
+        array_add(*agents, pool_add(Agent));
+        agent_init(agents[i], pick_random_position());
+    }
 
-    agent = pool_add(Agent);
-    agent_init(agent, .{30, 30});
 
-    rope.segment_count = settings.segment_count;
-    rope.segment_length = settings.segment_length;
-    rope.smoothed_target.time_to_90 = settings.smooth_time;
-    rope.gravity = .{0, settings.gravity};
-    rope.drag = settings.drag;
+    // rope.segment_count = settings.segment_count;
+    // rope.segment_length = settings.segment_length;
+    // rope.smoothed_target.time_to_90 = settings.smooth_time;
+    // rope.gravity = .{0, settings.gravity};
+    // rope.drag = settings.drag;
 
-    rope_init(*rope, .{GAME_WIDTH/2, GAME_HEIGHT/2});
+    // rope_init(*rope, .{GAME_WIDTH/2, GAME_HEIGHT/2});
 }
 
 game_stop :: ()
 {
-    pool_remove(agent);
-    agent = null;
+    for agent: agents
+    {
+        pool_remove(agent);
+    }
+    array_clear(*agents);
 }
 
 game_restart :: ()
@@ -81,17 +96,17 @@ game_update :: (dt: float)
     normalized_mouse_position: = get_mouse_position() / get_viewport_size();
     game_mouse_position : = .{normalized_mouse_position.x, 1.0 - normalized_mouse_position.y} * Vector2.{GAME_WIDTH, GAME_HEIGHT};
 
-    rope.segment_count = settings.segment_count;
-    rope.segment_length = settings.segment_length;
-    rope.smoothed_target.time_to_90 = settings.smooth_time;
-    rope.gravity = .{0, settings.gravity};
-    rope.drag = settings.drag;
-    if is_pressed(.MOUSE_BUTTON_MIDDLE)
-    {
-        rope.mode = ifx rope.mode == .PHYSICS then .FOLLOW_TARGET else .PHYSICS;
-    }
-    rope.target = game_mouse_position;
-    rope_update(*rope, dt);
+    // rope.segment_count = settings.segment_count;
+    // rope.segment_length = settings.segment_length;
+    // rope.smoothed_target.time_to_90 = settings.smooth_time;
+    // rope.gravity = .{0, settings.gravity};
+    // rope.drag = settings.drag;
+    // if is_pressed(.MOUSE_BUTTON_MIDDLE)
+    // {
+    //     rope.mode = ifx rope.mode == .PHYSICS then .FOLLOW_TARGET else .PHYSICS;
+    // }
+    // rope.target = game_mouse_position;
+    // rope_update(*rope, dt);
 
     // if is_agent_moving
     // {
@@ -107,10 +122,40 @@ game_update :: (dt: float)
     //     agent.position += xyz(agent.velocity * dt, 0);
     // }
 
+    make_everyone_follow :: (force: bool)
+    {
+        for i: 1..agents.count-1
+        {
+            if !force && !agents[i].is_following_target continue;
+
+            to_next_agent: = agents[i-1].position - agents[i].position;
+            target: = agents[i-1].position - normalize(to_next_agent) * s.agent_interval;
+            agent_go_to_target(agents[i], target.xy);
+        }
+    }
+
     if is_pressed(.MOUSE_BUTTON_LEFT)
     {
-        agent_go_to_target(agent, game_mouse_position);
+        is_following = true;
+        agent_go_to_target(agents[0], game_mouse_position);
+
+        make_everyone_follow(true);
     }
+
+    if is_pressed(.MOUSE_BUTTON_MIDDLE)
+    {
+        is_following = false;
+        for agent: agents
+        {
+            agent_go_to_target(agent, pick_random_position());
+        }
+    }
+
+    if is_following
+    {
+        make_everyone_follow(false);
+    }
+
 
     if is_pressed(.ESCAPE)
     {
