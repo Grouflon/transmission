@@ -41,7 +41,7 @@ game_shutdown :: ()
 
 pick_random_position :: () -> Vector2
 {
-    MARGIN :: 20.0;
+    MARGIN : float : 20.0;
     return .{
         random_range(MARGIN, GAME_WIDTH - MARGIN),
         random_range(MARGIN, GAME_HEIGHT - MARGIN)
@@ -85,7 +85,7 @@ game_update :: (dt: float)
 {
     settings: = resources.settings;
 
-    if is_pressed(#char "r") && is_down(.CTRL)
+    if is_pressed(#char "r")
     {
         game_restart();
     }
@@ -134,7 +134,7 @@ game_update :: (dt: float)
         }
     }
 
-    if is_pressed(.MOUSE_BUTTON_LEFT)
+    if is_down(.MOUSE_BUTTON_LEFT)
     {
         is_following = true;
         agent_go_to_target(agents[0], game_mouse_position);
@@ -177,8 +177,8 @@ game_draw :: ()
                 left = 0.0,
                 right = GAME_WIDTH,
                 bottom = 0.0,
-                near = -1.0,
-                far = 1.0
+                near = -10000.0,
+                far = 10000.0
             }
         });
         defer end_camera();

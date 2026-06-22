@@ -9,7 +9,7 @@ main :: ()
     register_resources(*resources);
 
     // Init
-    yae_init(800, 600, "transmission");
+    yae_init(GAME_WIDTH*4, GAME_HEIGHT*4, "transmission");
     game_init();
 
     // Loop
@@ -31,6 +31,6 @@ main :: ()
 // === Imports ===
 #scope_file
 #import "Basic"()(MEMORY_DEBUGGER = YAE_DEBUG_MEMORY);
-#import,dir "../../yae";
+#import "yae";
 
 #import "Math";

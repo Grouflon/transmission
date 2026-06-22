@@ -161,6 +161,8 @@ agent_update :: (using agent: *Agent, dt: float)
     update_leg(agent, *agent.left_leg, dt, true);
     update_leg(agent, *agent.right_leg, dt, false);
 
+    position.z = -position.y;
+
     // record velocity
     velocity_record_index = (velocity_record_index + 1) % agent.velocity_record.count;
     agent.velocity_record[velocity_record_index] = velocity.value;

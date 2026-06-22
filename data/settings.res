@@ -1,5 +1,5 @@
 {
-	"agent_count": 6,
+	"agent_count": 8,
 	"agent_interval": 12,
 	"agent_max_velocity": 90,
 	"agent_velocity_time_to_90": 0.1,
