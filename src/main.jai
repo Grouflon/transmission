@@ -1,5 +1,7 @@
-#load "game.jai";
 #load "agent.jai";
+#load "game.jai";
+#load "rope.jai";
+#load "settings.jai";
 
 // Boilerplate
 main :: ()
