@@ -1,0 +1,8 @@
+// raddbg 0.9.27 project file
+
+target:
+{
+  executable: "bin/transmission.exe"
+  working_directory: bin
+  enabled: 1
+}

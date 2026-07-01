@@ -200,9 +200,17 @@ build :: ()
     {
         if debug
         {
+            // RemedyBG command
+            // cmd: []string = .[
+            //     "remedybg", "-g", "-q",
+            //     tprint("%.rdbg", BUILD_NAME),
+            // ];
+            // Raddbg command
             cmd: []string = .[
-                "remedybg", "-g", "-q",
-                tprint("%.rdbg", BUILD_NAME),
+                "raddbg",
+                tprint("--project:%.raddbg_project", BUILD_NAME),
+                "--auto_run",
+                "--quit_after_success",
             ];
             result, output_string: = run_command(..cmd, capture_and_return_output= true);
             print("\n");
