@@ -90,7 +90,6 @@ game_update :: (dt: float)
         game_restart();
     }
 
-
     update_group(dt);
 
     normalized_mouse_position: = get_mouse_position() / get_viewport_size();
@@ -185,10 +184,12 @@ game_draw :: ()
 
         clear_background(resources.settings.background_color);
         draw_circle_outline(.{160,100, -0.1}, 50.0, 1.0);
+        
+        draw_all_commands();
+        clear_depth_buffer();
 
         draw_group("shadow");
         clear_depth_buffer();
-
 
         // for i: 0..resources.settings.segment_count-2
         // {
