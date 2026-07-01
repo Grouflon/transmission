@@ -158,7 +158,7 @@ agent_update :: (using agent: *Agent, dt: float)
 
         time: = agent.time + ifx is_left then s.leg_movement_phase*0.5 else 0.0;
         t: = (-time * facing_sign) * TAU / s.leg_movement_phase;
-        moving_target: = agent.position.xy + s.leg_target_offset*.{-facing_sign, 0} + .{cos(t), sin(t)} * s.leg_movement;
+        moving_target: = leg.node_positions[0] + .{0, -agent.body.leg_length} + s.leg_target_offset*.{-facing_sign, 0} + .{cos(t), sin(t)} * s.leg_movement;
         idle_target: = agent.position.xy + anchor_offset;
         leg.target = lerp(idle_target, moving_target, velocity_ratio);
 
