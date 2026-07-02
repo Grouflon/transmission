@@ -13,6 +13,10 @@
 	"agent_interval": 15,
 	"agent_max_velocity": 90,
 	"agent_velocity_time_to_90": 0.1,
+	"arm_length_range": {
+		"max": 11,
+		"min": 5
+	},
 	"arm_segments": 4,
 	"arm_target_time_to_90": 0.2,
 	"background_color": [
@@ -21,6 +25,14 @@
 		151,
 		255
 	],
+	"chest_height_range": {
+		"max": 12,
+		"min": 8
+	},
+	"chest_lower_ratio_range": {
+		"max": 0.7,
+		"min": 0.5
+	},
 	"clothes_tones": [
 		[
 			0,
@@ -91,6 +103,10 @@
 		]
 	],
 	"iterations": 1,
+	"leg_length_range": {
+		"max": 7,
+		"min": 4
+	},
 	"leg_movement": [
 		10,
 		2
@@ -101,6 +117,10 @@
 		2
 	],
 	"leg_target_time_to_90": 0.05,
+	"lower_body_width_range": {
+		"max": 10,
+		"min": 4
+	},
 	"segment_count": 30,
 	"segment_length": 17,
 	"skin_tones": [
@@ -130,5 +150,9 @@
 		]
 	],
 	"smooth_time": 0.3,
+	"upper_body_width_range": {
+		"max": 10,
+		"min": 4
+	},
 	"velocity_decay_distance": 15
 }

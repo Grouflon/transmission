@@ -47,7 +47,7 @@ agent_go_to_target :: (agent: *Agent, target: Vector2)
 
 agent_init :: (agent: *Agent, position: Vector2)
 {
-    agent.body = s.agent_body;
+    // agent.body = s.agent_body;
 
     agent.position = xyz(position, 0);
     agent.hair_color = random_get_array_item(s.hair_tones, BLACK);
@@ -91,7 +91,7 @@ agent_update :: (using agent: *Agent, dt: float)
     agent.right_arm.drag = s.drag;
     agent.right_arm.smoothed_target.time_to_90 = s.arm_target_time_to_90;
 
-    agent.body = s.agent_body;
+    // agent.body = s.agent_body;
 
     // move
     if is_following_target

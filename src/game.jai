@@ -53,6 +53,16 @@ game_start :: ()
     for i: 0..s.agent_count-1
     {
         array_add(*agents, pool_add(Agent));
+        agents[i].body = s.agent_body;
+
+        agents[i].body.leg_length = random_range(s.leg_length_range);
+        agents[i].body.arm_length = random_range(s.arm_length_range);
+        agents[i].body.chest_height = random_range(s.chest_height_range);
+        agents[i].body.chest_lower_ratio = random_range(s.chest_lower_ratio_range);
+        agents[i].body.lower_body_width = random_range(s.lower_body_width_range);
+        agents[i].body.upper_body_width = random_range(s.upper_body_width_range);
+        agents[i].body.hips_width = agents[i].body.lower_body_width - 1.0;
+
         agent_init(agents[i], pick_random_position());
     }
 

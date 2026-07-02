@@ -29,6 +29,13 @@ GameSettings :: struct
     debug_left_leg: bool; @serialize
     debug_right_leg: bool; @serialize
 
+    leg_length_range: RangeFloat = .{1,1}; @serialize @min(1)
+    arm_length_range: RangeFloat = .{1,1}; @serialize @min(1)
+    chest_height_range: RangeFloat = .{1,1}; @serialize @min(1)
+    chest_lower_ratio_range: RangeFloat = .{0.6,0.6}; @serialize @min(1)
+    lower_body_width_range: RangeFloat = .{1,1}; @serialize @min(1)
+    upper_body_width_range: RangeFloat = .{1,1}; @serialize @min(1)
+
     agent_body: AgentBody; @serialize
 
     skin_tones: [..]Color; @serialize
