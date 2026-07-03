@@ -1,13 +1,13 @@
 {
 	"agent_body": {
-		"arm_length": 8,
-		"chest_height": 9.3,
-		"chest_lower_ratio": 0.6,
+		"arm_length": 16.299999,
+		"chest_height": 16.700001,
+		"chest_lower_ratio": 0.8,
 		"chest_overlapping_ratio": 0.2,
-		"hips_width": 4.2,
-		"leg_length": 5.5,
-		"lower_body_width": 6.1,
-		"upper_body_width": 6.2
+		"hips_width": 8.1,
+		"leg_length": 4.6,
+		"lower_body_width": 7.7,
+		"upper_body_width": 13.6
 	},
 	"agent_count": 8,
 	"agent_interval": 15,
@@ -121,8 +121,7 @@
 		"max": 10,
 		"min": 4
 	},
-	"segment_count": 30,
-	"segment_length": 17,
+	"override_agent_body": false,
 	"skin_tones": [
 		[
 			221,
@@ -154,5 +153,6 @@
 		"max": 10,
 		"min": 4
 	},
-	"velocity_decay_distance": 15
+	"velocity_decay_distance": 15,
+	"z": 0
 }

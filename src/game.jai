@@ -10,10 +10,8 @@ GAME_WIDTH :: 320;
 GAME_HEIGHT :: 200;
 game_render_texture: RenderTexture;
 
-agents: [..]*Agent;
+agents: [..]*AgentComponent;
 is_following: bool;
-
-// rope: Rope;
 
 game_init :: ()
 {
@@ -52,35 +50,15 @@ game_start :: ()
 {
     for i: 0..s.agent_count-1
     {
-        array_add(*agents, pool_add(Agent));
-        agents[i].body = s.agent_body;
-
-        agents[i].body.leg_length = random_range(s.leg_length_range);
-        agents[i].body.arm_length = random_range(s.arm_length_range);
-        agents[i].body.chest_height = random_range(s.chest_height_range);
-        agents[i].body.chest_lower_ratio = random_range(s.chest_lower_ratio_range);
-        agents[i].body.lower_body_width = random_range(s.lower_body_width_range);
-        agents[i].body.upper_body_width = random_range(s.upper_body_width_range);
-        agents[i].body.hips_width = agents[i].body.lower_body_width - 1.0;
-
-        agent_init(agents[i], pick_random_position());
+        array_add(*agents, make_agent(pick_random_position()));
     }
-
-
-    // rope.segment_count = settings.segment_count;
-    // rope.segment_length = settings.segment_length;
-    // rope.smoothed_target.time_to_90 = settings.smooth_time;
-    // rope.gravity = .{0, settings.gravity};
-    // rope.drag = settings.drag;
-
-    // rope_init(*rope, .{GAME_WIDTH/2, GAME_HEIGHT/2});
 }
 
 game_stop :: ()
 {
     for agent: agents
     {
-        pool_remove(agent);
+        remove_entity(agent.entity);
     }
     array_clear(*agents);
 }
@@ -105,41 +83,15 @@ game_update :: (dt: float)
     normalized_mouse_position: = get_mouse_position() / get_viewport_size();
     game_mouse_position : = .{normalized_mouse_position.x, 1.0 - normalized_mouse_position.y} * Vector2.{GAME_WIDTH, GAME_HEIGHT};
 
-    // rope.segment_count = settings.segment_count;
-    // rope.segment_length = settings.segment_length;
-    // rope.smoothed_target.time_to_90 = settings.smooth_time;
-    // rope.gravity = .{0, settings.gravity};
-    // rope.drag = settings.drag;
-    // if is_pressed(.MOUSE_BUTTON_MIDDLE)
-    // {
-    //     rope.mode = ifx rope.mode == .PHYSICS then .FOLLOW_TARGET else .PHYSICS;
-    // }
-    // rope.target = game_mouse_position;
-    // rope_update(*rope, dt);
-
-    // if is_agent_moving
-    // {
-    //     pid.p = settings.p;
-    //     pid.i = settings.i;
-    //     pid.d = settings.d;
-
-    //     agent_position: Vector2 = agent.position.xy;
-    //     result: = process_pid_controller(*pid, agent_position, agent_target, dt);
-    //     acc: = max_length(result, settings.max_acceleration);
-    //     agent.velocity += acc * dt;
-    //     agent.velocity = max_length(agent.velocity, settings.max_velocity);
-    //     agent.position += xyz(agent.velocity * dt, 0);
-    // }
-
     make_everyone_follow :: (force: bool)
     {
         for i: 1..agents.count-1
         {
             if !force && !agents[i].is_following_target continue;
 
-            to_next_agent: = agents[i-1].position - agents[i].position;
-            target: = agents[i-1].position - normalize(to_next_agent) * s.agent_interval;
-            agent_go_to_target(agents[i], target.xy);
+            to_next_agent: = agents[i-1].transform.position.xy - agents[i].transform.position.xy;
+            target: = agents[i-1].transform.position.xy - normalize(to_next_agent) * s.agent_interval;
+            agent_go_to_target(agents[i], target);
         }
     }
 
@@ -164,7 +116,6 @@ game_update :: (dt: float)
     {
         make_everyone_follow(false);
     }
-
 
     if is_pressed(.ESCAPE)
     {
@@ -201,22 +152,11 @@ game_draw :: ()
         draw_group("shadow");
         clear_depth_buffer();
 
-        // for i: 0..resources.settings.segment_count-2
-        // {
-        //     draw_line(xyz(segments[i], 0.0), xyz(segments[i+1], 0.0), 2.0, RED);
-        // }
-        // for i: 0..resources.settings.segment_count-1
-        // {
-        //     draw_circle(xyz(segments[i], 0.1), 3.0, BLACK);
-        // }
-
         draw_group();
-        // rope_draw(*rope, 0.0, 5.0);
 
         clear_depth_buffer();
 
         draw_group("debug");
-        // rope_draw_debug(*rope);
     }
 
     // COMPOSITING

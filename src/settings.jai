@@ -7,8 +7,6 @@ GameSettings :: struct
     agent_interval: float = 10.0; @serialize @drag
 
     background_color: Color; @serialize
-    segment_count: int = 1; @serialize @range(1,64)
-    segment_length: float = 5.0; @serialize @step(1)
     gravity: float = -9.8; @serialize
     drag: float = 0.1; @serialize
     smooth_time: float = 0.3; @serialize
@@ -29,6 +27,8 @@ GameSettings :: struct
     debug_left_leg: bool; @serialize
     debug_right_leg: bool; @serialize
 
+    z: float; @serialize @drag
+
     leg_length_range: RangeFloat = .{1,1}; @serialize @min(1)
     arm_length_range: RangeFloat = .{1,1}; @serialize @min(1)
     chest_height_range: RangeFloat = .{1,1}; @serialize @min(1)
@@ -36,6 +36,7 @@ GameSettings :: struct
     lower_body_width_range: RangeFloat = .{1,1}; @serialize @min(1)
     upper_body_width_range: RangeFloat = .{1,1}; @serialize @min(1)
 
+    override_agent_body: bool; @serialize
     agent_body: AgentBody; @serialize
 
     skin_tones: [..]Color; @serialize

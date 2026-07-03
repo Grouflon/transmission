@@ -1,7 +1,10 @@
-#load "agent.jai";
 #load "game.jai";
 #load "rope.jai";
 #load "settings.jai";
+
+#load "components/agent.jai";
+#load "components/iso_transform.jai";
+#load "components/shadow.jai";
 
 // Boilerplate
 main :: ()

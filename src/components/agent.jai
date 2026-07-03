@@ -1,6 +1,35 @@
-Agent :: struct
+make_agent:: (position: Vector2) -> *AgentComponent
 {
-    position: Vector3;
+    e: = add_entity();
+
+    transform: = entity_add_component(e, IsoTransformComponent);
+    transform.position = xyz(position, 0);
+
+    entity_add_component(e, ShadowComponent);
+
+    agent: = entity_add_component(e, AgentComponent);
+
+    agent.body = s.agent_body;
+    agent.body.leg_length = random_range(s.leg_length_range);
+    agent.body.arm_length = random_range(s.arm_length_range);
+    agent.body.chest_height = random_range(s.chest_height_range);
+    agent.body.chest_lower_ratio = random_range(s.chest_lower_ratio_range);
+    agent.body.lower_body_width = random_range(s.lower_body_width_range);
+    agent.body.upper_body_width = random_range(s.upper_body_width_range);
+    agent.body.hips_width = agent.body.lower_body_width - 1.0;
+
+    entity_initialize(e);
+
+    return agent;
+}
+
+AgentComponent :: struct
+{
+    #as using base: EntityComponent;
+
+    transform: *IsoTransformComponent;
+    shadow: *ShadowComponent;
+
     velocity: Smoother(Vector2);
     velocity_record: [10]Vector2;
     velocity_record_index: int;
@@ -38,18 +67,18 @@ AgentBody :: struct
     arm_length: float = 6.0; @serialize @drag @min(0)
 }
 
-agent_go_to_target :: (agent: *Agent, target: Vector2)
+agent_go_to_target :: (agent: *AgentComponent, target: Vector2)
 {
     agent.is_following_target = true;
     agent.has_faced_following_target = false;
     agent.following_target = target;
 }
 
-agent_init :: (agent: *Agent, position: Vector2)
+initialize :: (agent: *AgentComponent)
 {
-    // agent.body = s.agent_body;
+    agent.transform = get_component(agent, IsoTransformComponent);
+    agent.shadow = get_component(agent, ShadowComponent);
 
-    agent.position = xyz(position, 0);
     agent.hair_color = random_get_array_item(s.hair_tones, BLACK);
     agent.skin_color = random_get_array_item(s.skin_tones, BLACK);
     agent.top_color = random_get_array_item(s.clothes_tones, BLACK);
@@ -65,20 +94,28 @@ agent_init :: (agent: *Agent, position: Vector2)
     agent.right_arm.mode = .PHYSICS;
     rope_init(*agent.right_arm, get_shoulders_position(agent, false).xy);
 
+    agent_position: = get_draw_position(agent.transform).xy;
     agent.left_leg.segment_count = 2;
     agent.left_leg.segment_length = agent.body.leg_length / agent.left_leg.segment_count;
     agent.left_leg.mode = .FOLLOW_TARGET;
-    rope_init(*agent.left_leg, agent.position.xy + .{0, agent.body.leg_length} + .{-agent.body.hips_width/2,0});
+    rope_init(*agent.left_leg, agent_position + .{0, agent.body.leg_length} + .{-agent.body.hips_width/2,0});
 
     agent.right_leg.segment_count = 2;
     agent.right_leg.segment_length = agent.body.leg_length / agent.left_leg.segment_count;
     agent.right_leg.mode = .FOLLOW_TARGET;
-    rope_init(*agent.right_leg, agent.position.xy + .{0, agent.body.leg_length} + .{agent.body.hips_width/2,0});
+    rope_init(*agent.right_leg, agent_position + .{0, agent.body.leg_length} + .{agent.body.hips_width/2,0});
 }
 
-agent_update :: (using agent: *Agent, dt: float)
+shutdown :: (agent: *AgentComponent)
+{
+    
+}
+
+update :: (using agent: *AgentComponent, dt: float)
 {
     time += dt;
+
+    agent.transform.position.z = s.z;
 
     // sync settings
     velocity.time_to_90 = s.agent_velocity_time_to_90;
@@ -91,12 +128,15 @@ agent_update :: (using agent: *Agent, dt: float)
     agent.right_arm.drag = s.drag;
     agent.right_arm.smoothed_target.time_to_90 = s.arm_target_time_to_90;
 
-    // agent.body = s.agent_body;
+    if s.override_agent_body
+    {
+        agent.body = s.agent_body;
+    }
 
     // move
     if is_following_target
     {
-        agent_to_target: = (following_target - position.xy);
+        agent_to_target: = (following_target - transform.position.xy);
         d: = dot_product(agent_to_target, velocity.value);
         if !has_faced_following_target && d >= 0
         {
@@ -119,7 +159,7 @@ agent_update :: (using agent: *Agent, dt: float)
             smoother_update(*velocity, target_velocity, dt);
 
             movement: = xyz(velocity.value, 0) * dt;
-            position += movement;
+            transform.position += movement;
         }
     }
 
@@ -130,7 +170,7 @@ agent_update :: (using agent: *Agent, dt: float)
     }
 
     // arms
-    update_arm :: (agent: *Agent, arm: *Rope, dt: float, is_left: bool)
+    update_arm :: (agent: *AgentComponent, arm: *Rope, dt: float, is_left: bool)
     {
         arm.segment_count = s.arm_segments;
         arm.segment_length = agent.body.arm_length / arm.segment_count;
@@ -147,19 +187,21 @@ agent_update :: (using agent: *Agent, dt: float)
     update_arm(agent, *right_arm, dt, false);
 
     // legs
-    update_leg :: (agent: *Agent, leg: *Rope, dt: float, is_left: bool)
+    update_leg :: (agent: *AgentComponent, leg: *Rope, dt: float, is_left: bool)
     {
+        agent_position: = get_draw_position(agent.transform).xy;
+
         facing_sign: float = ifx agent.is_facing_left then -1.0 else 1.0;
         velocity_ratio: = length(agent.velocity.value) / s.agent_max_velocity;
         if velocity_ratio < 0.1 velocity_ratio = 0.0;
         anchor_offset: = .{agent.body.hips_width/2,0} * Vector2.{ifx is_left then -1.0 else 1.0,1.0};
 
-        rope_set_first_node(leg, agent.position.xy + .{0, agent.body.leg_length} + anchor_offset);
+        rope_set_first_node(leg, agent_position + .{0, agent.body.leg_length} + anchor_offset);
 
         time: = agent.time + ifx is_left then s.leg_movement_phase*0.5 else 0.0;
         t: = (-time * facing_sign) * TAU / s.leg_movement_phase;
         moving_target: = leg.node_positions[0] + .{0, -agent.body.leg_length} + s.leg_target_offset*.{-facing_sign, 0} + .{cos(t), sin(t)} * s.leg_movement;
-        idle_target: = agent.position.xy + anchor_offset;
+        idle_target: = agent_position + anchor_offset;
         leg.target = lerp(idle_target, moving_target, velocity_ratio);
 
         leg.smoothed_target.time_to_90 = lerp(0.0, s.leg_target_time_to_90, velocity_ratio);
@@ -170,15 +212,13 @@ agent_update :: (using agent: *Agent, dt: float)
     update_leg(agent, *agent.left_leg, dt, true);
     update_leg(agent, *agent.right_leg, dt, false);
 
-    position.z = -position.y;
-
     // record velocity
     velocity_record_index = (velocity_record_index + 1) % agent.velocity_record.count;
     agent.velocity_record[velocity_record_index] = velocity.value;
 
-} @update_group()
+}
 
-agent_draw :: (agent: *Agent)
+draw :: (agent: *AgentComponent)
 {
     sign: float = ifx agent.is_facing_left then -1.0 else 1.0;
 
@@ -210,36 +250,31 @@ agent_draw :: (agent: *Agent)
     draw_ellipse(neck + .{0,1,0.3}, .{3,2.5}, agent.skin_color);
     draw_ellipse(neck + .{sign * 1,3,0.4}, .{3,2}, agent.hair_color);
 
-} @draw_group()
+}
 
-agent_draw_shadow :: (agent: *Agent)
-{
-    draw_ellipse(agent.position + .{-2, 0,0}, .{6.0, 2.0}, .{0,0,0,70});
-} @draw_group("shadow")
-
-agent_draw_debug :: (using agent: *Agent)
+agent_draw_debug :: (using agent: *AgentComponent)
 {
     if s.debug_left_leg { draw_circle(left_leg.target, 2.0, RED); }
     if s.debug_right_leg { draw_circle(right_leg.target, 2.0, RED); }
     // draw_line(position, position + xyz(velocity.value, 0), 1.0, RED);
 } @draw_group("debug")
 
-get_hips_position :: (agent: *Agent) -> Vector3
+get_hips_position :: (agent: *AgentComponent) -> Vector3
 {
-    return agent.position + .{0,agent.body.leg_length,0};
+    return get_draw_position(agent.transform) + .{0,agent.body.leg_length,0};
 }
 
-get_chest_base_position :: (agent: *Agent) -> Vector3
+get_chest_base_position :: (agent: *AgentComponent) -> Vector3
 {
     return get_hips_position(agent) + .{0,-1, 0};
 }
 
-get_neck_position :: (agent: *Agent) -> Vector3
+get_neck_position :: (agent: *AgentComponent) -> Vector3
 {
     return get_chest_base_position(agent) + .{0, agent.body.chest_height - 3.0, 0};
 }
 
-get_shoulders_position :: (agent: *Agent, is_left: bool) -> Vector3
+get_shoulders_position :: (agent: *AgentComponent, is_left: bool) -> Vector3
 {
     upper_chest_height: = (1.0 - agent.body.chest_lower_ratio + agent.body.chest_overlapping_ratio) * agent.body.chest_height;
     return get_chest_base_position(agent) + .{0,agent.body.chest_height - upper_chest_height*0.5, 0} + .{(ifx is_left then -1.0 else 1.0) * agent.body.upper_body_width*0.5, 0, 0};
