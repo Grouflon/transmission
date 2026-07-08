@@ -75,6 +75,26 @@
 	"debug_left_leg": false,
 	"debug_right_leg": false,
 	"drag": 0.001,
+	"emitter_settings": {
+		"angle": {
+			"max": 269.399994,
+			"min": 0
+		},
+		"auto_emit": false,
+		"duration": {
+			"max": 1,
+			"min": 1
+		},
+		"emission_rate": {
+			"max": 100,
+			"min": 100
+		},
+		"speed": {
+			"max": 1,
+			"min": 1
+		},
+		"type": "GRAIN"
+	},
 	"gravity": -800,
 	"hair_tones": [
 		[

@@ -3,6 +3,8 @@ GameSettings :: struct
     #as using _resource: Resource;
     type = type_info(GameSettings);
 
+    emitter_settings: ParticleEmitterSettings; @serialize
+
     agent_count: int = 1; @min(1) @serialize
     agent_interval: float = 10.0; @serialize @drag
 
