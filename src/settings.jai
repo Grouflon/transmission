@@ -28,6 +28,7 @@ GameSettings :: struct
     debug_right_leg: bool; @serialize
 
     z: float; @serialize @drag
+    light_angle: float = 30.0; @serialize @drag @range(-89,89);
 
     leg_length_range: RangeFloat = .{1,1}; @serialize @min(1)
     arm_length_range: RangeFloat = .{1,1}; @serialize @min(1)

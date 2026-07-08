@@ -79,6 +79,8 @@ initialize :: (agent: *AgentComponent)
     agent.transform = get_component(agent, IsoTransformComponent);
     agent.shadow = get_component(agent, ShadowComponent);
 
+    agent.shadow.base_height = 4.0;
+
     agent.hair_color = random_get_array_item(s.hair_tones, BLACK);
     agent.skin_color = random_get_array_item(s.skin_tones, BLACK);
     agent.top_color = random_get_array_item(s.clothes_tones, BLACK);
@@ -118,6 +120,11 @@ update :: (using agent: *AgentComponent, dt: float)
     agent.transform.position.z = s.z;
 
     // sync settings
+    if s.override_agent_body
+    {
+        agent.body = s.agent_body;
+    }
+
     velocity.time_to_90 = s.agent_velocity_time_to_90;
 
     agent.left_arm.gravity = .{0, s.gravity};
@@ -128,10 +135,7 @@ update :: (using agent: *AgentComponent, dt: float)
     agent.right_arm.drag = s.drag;
     agent.right_arm.smoothed_target.time_to_90 = s.arm_target_time_to_90;
 
-    if s.override_agent_body
-    {
-        agent.body = s.agent_body;
-    }
+    agent.shadow.size = .{agent.body.lower_body_width * 0.5 + 2.0, 2.0};
 
     // move
     if is_following_target
