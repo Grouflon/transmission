@@ -80,18 +80,25 @@
 			"max": 269.399994,
 			"min": 0
 		},
-		"auto_emit": false,
+		"auto_emit": true,
+		"color": [
+			255,
+			255,
+			255,
+			255
+		],
 		"duration": {
-			"max": 1,
+			"max": 1.6,
 			"min": 1
 		},
-		"emission_rate": {
-			"max": 100,
-			"min": 100
+		"emission_rate": 200,
+		"size": {
+			"max": 5,
+			"min": 1.9
 		},
 		"speed": {
-			"max": 1,
-			"min": 1
+			"max": 20,
+			"min": 5
 		},
 		"type": "GRAIN"
 	},

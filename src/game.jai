@@ -75,6 +75,9 @@ game_update :: (dt: float)
 {
     settings: = resources.settings;
 
+    normalized_mouse_position: = get_mouse_position() / get_viewport_size();
+    game_mouse_position : = .{normalized_mouse_position.x, 1.0 - normalized_mouse_position.y} * Vector2.{GAME_WIDTH, GAME_HEIGHT};
+
     if is_pressed(#char "r")
     {
         game_restart();
@@ -83,10 +86,7 @@ game_update :: (dt: float)
     update_group(dt);
 
     emitter.settings = s.emitter_settings;
-    particle_emitter_update(*emitter, xyz(get_mouse_position(), 0), dt);
-
-    normalized_mouse_position: = get_mouse_position() / get_viewport_size();
-    game_mouse_position : = .{normalized_mouse_position.x, 1.0 - normalized_mouse_position.y} * Vector2.{GAME_WIDTH, GAME_HEIGHT};
+    particle_emitter_update(*emitter, xyz(game_mouse_position, 0), dt);
 
     make_everyone_follow :: (force: bool)
     {
