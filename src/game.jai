@@ -86,6 +86,7 @@ game_update :: (dt: float)
     update_group(dt);
 
     emitter.settings = s.emitter_settings;
+    emitter.settings.auto_emit = is_down(.MOUSE_BUTTON_RIGHT);
     particle_emitter_update(*emitter, xyz(game_mouse_position, 0), dt);
 
     make_everyone_follow :: (force: bool)

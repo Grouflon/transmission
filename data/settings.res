@@ -77,13 +77,13 @@
 	"drag": 0.001,
 	"emitter_settings": {
 		"angle": {
-			"max": 269.399994,
+			"max": 360,
 			"min": 0
 		},
 		"auto_emit": true,
 		"color": [
 			255,
-			255,
+			177,
 			255,
 			255
 		],
@@ -92,9 +92,14 @@
 			"min": 1
 		},
 		"emission_rate": 200,
+		"gravity": [
+			0,
+			90,
+			0
+		],
 		"size": {
-			"max": 5,
-			"min": 1.9
+			"max": 2,
+			"min": 0.5
 		},
 		"speed": {
 			"max": 20,
